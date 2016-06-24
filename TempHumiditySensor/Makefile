@@ -46,6 +46,9 @@ test: ./test/mocks/mock_mcu.c create_mocks
 	$(foreach src, $(TEST_FILES_SRC), ruby $(UNITY_ROOT)/auto/generate_test_runner.rb $(src) test/test_runner/$(notdir $(basename $(src)))_runner.c;)
 	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) $(LIBS) -o $(TARGET_TEST)$(TARGET_EXTENSION)
 
+clean:
+	rm *$(TARGET_EXTENSION) *.gc* ./test/mocks/* ./test/test_runner/*
+
 print:
 	echo $(SRC_FILES)
 	echo $(TEST_FILES_SRC)
