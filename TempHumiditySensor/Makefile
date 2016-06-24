@@ -19,7 +19,8 @@ LIBS=-ldriver
 SYMBOLS=-DTEST -DPART_TM4C123GH6PM
 
 SRC_FILES=$(wildcard src/*.c)
-TEST_FILES_ALL:=$(UNITY_ROOT)/src/unity.c $(CMOCK_ROOT)/src/cmock.c test/*.c test/mocks/*.c test/test_runner/*.c $(filter-out src/main.c, $(SRC_FILES))
+TEST_FILES_ALL:=$(UNITY_ROOT)/src/unity.c $(CMOCK_ROOT)/src/cmock.c test/*.c test/test_runner/*.c
+#TEST_FILES_ALL:=$(UNITY_ROOT)/src/unity.c $(CMOCK_ROOT)/src/cmock.c test/*.c test/mocks/*.c test/test_runner/*.c $(filter-out src/main.c, $(SRC_FILES))
 TEST_FILES_SRC=$(wildcard test/*.c)
 
 FILES_TO_MOCK=$(wildcard inc/*.h)
@@ -44,7 +45,8 @@ create_mocks:
 
 test: ./test/mocks/mock_mcu.c create_mocks
 	$(foreach src, $(TEST_FILES_SRC), ruby $(UNITY_ROOT)/auto/generate_test_runner.rb $(src) test/test_runner/$(notdir $(basename $(src)))_runner.c;)
-	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) $(LIBS) -o $(TARGET_TEST)$(TARGET_EXTENSION)
+	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) ./src/humidity.c ./test/mocks/mock_mcu.c ./test/mocks/mock_i2c_interface.c  $(LIBS) -o humidity_test$(TARGET_EXTENSION)
+	#$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) $(LIBS) -o $(TARGET_TEST)$(TARGET_EXTENSION)
 
 clean:
 	rm *$(TARGET_EXTENSION) *.gc* ./test/mocks/* ./test/test_runner/*
