@@ -48,7 +48,7 @@ void initialize_i2c()
 	I2CMasterInitExpClk(I2C0_BASE, SysCtlClockGet(), false);
 }
 
-uint32_t i2c_read_byte(uint8_t slave_address, uint8_t register_address)
+uint8_t i2c_read_byte(uint8_t slave_address, uint8_t register_address)
 {
 	//
 	// Tell the master module what address it will place on the bus when

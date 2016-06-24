@@ -29,10 +29,10 @@
 //*****************************************************************************
 #define SLAVE_ADDRESS 0x5F
 
-static uint8_t H0_RH;
-static uint8_t H1_RH;
-static int16_t H0_T0_OUT;
-static int16_t H1_T0_OUT;
+static uint8_t H0_RH = 0;
+static uint8_t H1_RH = 0;
+static int16_t H0_T0_OUT = 0;
+static int16_t H1_T0_OUT = 0;
 
 static uint32_t read_register(uint8_t register_address)
 {
@@ -73,30 +73,30 @@ static uint32_t read_register(uint8_t register_address)
 }
 
 
-void get_humidity_reading()
+int16_t get_humidity_reading()
 {
 	int16_t H_OUT = 0;
 
-	uint8_t h_out_l = read_register(0x28);
-	uint8_t h_out_h = read_register(0x29);
+	uint8_t h_out_l = i2c_read_byte(SLAVE_ADDRESS, 0x28);
+	uint8_t h_out_h = i2c_read_byte(SLAVE_ADDRESS, 0x29);
 	H_OUT = (h_out_h << 8) | h_out_l;
 
 	int16_t humidity = ((H1_RH - H0_RH) * (H_OUT - H0_T0_OUT) / (H1_T0_OUT - H0_T0_OUT)) + H0_RH;
 
-	return;
+	return humidity;
 }
 
 
 void initialize_humidity()
 {
-	H0_RH = read_register(0x30) / 2;
-	H1_RH = read_register(0x31) / 2;
+	H0_RH = i2c_read_byte(SLAVE_ADDRESS, 0x30) / 2;
+	H1_RH = i2c_read_byte(SLAVE_ADDRESS, 0x31) / 2;
 
-	uint8_t h0_t0_l = read_register(0x36);
-	uint8_t h0_t0_h = read_register(0x37);
+	uint8_t h0_t0_l = i2c_read_byte(SLAVE_ADDRESS, 0x36);
+	uint8_t h0_t0_h = i2c_read_byte(SLAVE_ADDRESS, 0x37);
 	H0_T0_OUT = (h0_t0_h << 8) | (h0_t0_l);
 
-	uint8_t h1_t0_l = read_register(0x3A);
-	uint8_t h1_t0_h = read_register(0x3B);
-	H1_T0_OUT = (h0_t0_h << 8) | (h0_t0_l);
+	uint8_t h1_t0_l = i2c_read_byte(SLAVE_ADDRESS, 0x3A);
+	uint8_t h1_t0_h = i2c_read_byte(SLAVE_ADDRESS, 0x3B);
+	H1_T0_OUT = (h1_t0_h << 8) | (h1_t0_l);
 }
