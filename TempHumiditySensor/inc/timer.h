@@ -8,6 +8,10 @@
 #ifndef INC_TIMER_H_
 #define INC_TIMER_H_
 
+#ifdef TEST
+void Timer0IntHandler(void);
+#endif
+
 void timer_init();
 void timer_enable();
 

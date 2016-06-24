@@ -19,7 +19,7 @@ LIBS=-ldriver
 SYMBOLS=-DTEST -DPART_TM4C123GH6PM
 
 SRC_FILES=$(wildcard src/*.c)
-TEST_FILES_ALL:=$(UNITY_ROOT)/src/unity.c $(CMOCK_ROOT)/src/cmock.c test/*.c test/test_runner/*.c
+TEST_FILES_ALL:=$(UNITY_ROOT)/src/unity.c $(CMOCK_ROOT)/src/cmock.c 
 #TEST_FILES_ALL:=$(UNITY_ROOT)/src/unity.c $(CMOCK_ROOT)/src/cmock.c test/*.c test/mocks/*.c test/test_runner/*.c $(filter-out src/main.c, $(SRC_FILES))
 TEST_FILES_SRC=$(wildcard test/*.c)
 
@@ -43,10 +43,22 @@ cmock.o: $(CMOCK_ROOT)/src/cmock.c
 create_mocks:
 	$(foreach mock, $(FILES_TO_MOCK), CMOCK_DIR=${CMOCK_ROOT} ruby $(CMOCK_ROOT)/scripts/create_mock.rb $(mock);)
 
-test: ./test/mocks/mock_mcu.c create_mocks
-	$(foreach src, $(TEST_FILES_SRC), ruby $(UNITY_ROOT)/auto/generate_test_runner.rb $(src) test/test_runner/$(notdir $(basename $(src)))_runner.c;)
-	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) ./src/humidity.c ./test/mocks/mock_mcu.c ./test/mocks/mock_i2c_interface.c  $(LIBS) -o humidity_test$(TARGET_EXTENSION)
-	#$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) $(LIBS) -o $(TARGET_TEST)$(TARGET_EXTENSION)
+test_humidity:
+	ruby $(UNITY_ROOT)/auto/generate_test_runner.rb ./test/test_humidity.c ./test/test_runner/test_humidity_runner.c
+	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) ./test/test_humidity.c ./src/humidity.c ./test/mocks/mock_mcu.c ./test/mocks/mock_i2c_interface.c ./test/test_runner/test_humidity_runner.c $(LIBS) -o humidity_test$(TARGET_EXTENSION)
+
+test_led:
+	ruby $(UNITY_ROOT)/auto/generate_test_runner.rb ./test/test_led.c ./test/test_runner/test_led_runner.c
+	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) ./test/test_led.c ./src/led.c ./test/mocks/mock_mcu.c ./test/test_runner/test_led_runner.c $(LIBS) -o led_test$(TARGET_EXTENSION)
+
+test_timer:
+	ruby $(UNITY_ROOT)/auto/generate_test_runner.rb ./test/test_timer.c ./test/test_runner/test_timer_runner.c
+	$(CC) $(CFLAGS) $(SYMBOLS) $(TEST_INC) $(TEST_LIBS) $(TEST_FILES_ALL) ./test/test_timer.c ./src/timer.c ./src/led.c ./test/mocks/mock_mcu.c ./test/mocks/mock_humidity.c ./test/test_runner/test_timer_runner.c $(LIBS) -o timer_test$(TARGET_EXTENSION)
+
+test: ./test/mocks/mock_mcu.c create_mocks test_humidity test_led test_timer
+	./humidity_test.out
+	./led_test.out
+	./timer_test.out
 
 clean:
 	rm *$(TARGET_EXTENSION) *.gc* ./test/mocks/* ./test/test_runner/*

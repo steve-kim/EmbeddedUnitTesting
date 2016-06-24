@@ -13,9 +13,9 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 
-#include "timer.h"
-#include "humidity.h"
 #include "led.h"
+#include "humidity.h"
+#include "timer.h"
 
 void Timer0IntHandler(void)
 {

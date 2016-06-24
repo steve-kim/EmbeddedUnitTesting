@@ -11,6 +11,8 @@
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
 
+#include "led.h"
+
 void led_on()
 {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, GPIO_PIN_3);
