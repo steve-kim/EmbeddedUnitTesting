@@ -8,25 +8,8 @@
 #include "driverlib/sysctl.h"
 
 #include "i2c_interface.h"
+#include "humidity.h"
 
-//*****************************************************************************
-//
-// Number of I2C data packets to send.
-//
-//*****************************************************************************
-#define NUM_I2C_DATA 3
-
-//*****************************************************************************
-//
-// Set the address for slave module. This is a 7-bit address sent in the
-// following format:
-//                      [A6:A5:A4:A3:A2:A1:A0:RS]
-//
-// A zero in the "RS" position of the first byte means that the master
-// transmits (sends) data to the selected slave, and a one in this position
-// means that the master receives data from the slave.
-//
-//*****************************************************************************
 #define SLAVE_ADDRESS 0x5F
 
 static uint8_t H0_RH = 0;
@@ -34,44 +17,10 @@ static uint8_t H1_RH = 0;
 static int16_t H0_T0_OUT = 0;
 static int16_t H1_T0_OUT = 0;
 
-static uint32_t read_register(uint8_t register_address)
+int16_t get_temperature_reading()
 {
-	//
-	// Tell the master module what address it will place on the bus when
-	// communicating with the slave.  Set the address to SLAVE_ADDRESS
-	// (as set in the slave module).  The receive parameter is set to false
-	// which indicates the I2C Master is initiating a writes to the slave.  If
-	// true, that would indicate that the I2C Master is initiating reads from
-	// the slave.
-	//
-	I2CMasterSlaveAddrSet(I2C0_BASE, SLAVE_ADDRESS, false);
-
-	I2CMasterDataPut(I2C0_BASE, register_address);
-	I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-
-	while(I2CMasterBusy(I2C0_BASE))
-	{
-	}
-
-	//
-	// Tell the master module what address it will place on the bus when
-	// communicating with the slave.  Set the address to SLAVE_ADDRESS
-	// (as set in the slave module).  The receive parameter is set to false
-	// which indicates the I2C Master is initiating a writes to the slave.  If
-	// true, that would indicate that the I2C Master is initiating reads from
-	// the slave.
-	//
-	I2CMasterSlaveAddrSet(I2C0_BASE, SLAVE_ADDRESS, true);
-
-	I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
-
-	while(I2CMasterBusy(I2C0_BASE))
-	{
-	}
-
-	return I2CMasterDataGet(I2C0_BASE);
+	return 50;
 }
-
 
 int16_t get_humidity_reading()
 {

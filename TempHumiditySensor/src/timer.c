@@ -26,6 +26,12 @@ void Timer0IntHandler(void)
 	} else {
 		led_off();
 	}
+
+/*	if (get_temperature_reading() > 60) {
+		led_on();
+	} else {
+		led_off();
+	}*/
 }
 
 void timer_init()

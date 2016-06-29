@@ -15,20 +15,21 @@ void tearDown(void)
 {
 }
 
-/*void test_wheninterrupted_thenreadhumidity()
+void test_wheninterrupted_thenreadhumidity()
 {
     get_humidity_reading_ExpectAndReturn(40);
 
-    TEST_ASSERT_EQUALS_INT16(40, Timer0IntHandler());
-}*/
+    Timer0IntHandler();
+}
 
 void test_whenhumiditygreaterthan60_thenledturnson()
 {
     get_humidity_reading_ExpectAndReturn(70);
+    get_register_ExpectAndReturn(0x40025020, 0x00000008);
 
     Timer0IntHandler();
 
-    TEST_ASSERT_EQUAL_UINT32(registers[0x40025020], 0x00000008);
+    TEST_ASSERT_EQUAL_UINT32(registers[0x40025020], get_register(0x40025020));
 }
 
 void test_whenhumiditylessthan60_thenledturnsoff()

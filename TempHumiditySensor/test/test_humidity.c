@@ -46,3 +46,4 @@ void test_humidityreading_whenhoutismin()
 
     TEST_ASSERT_INT16_WITHIN(1, 145, get_humidity_reading());
 }
+

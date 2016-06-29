@@ -14,6 +14,7 @@
 uint32_t read_register(uint8_t register_address);
 #endif
 void initialize_humidity();
+int16_t get_temperature_reading();
 int16_t get_humidity_reading();
 
 #endif /* INC_HUMIDITY_H_ */
